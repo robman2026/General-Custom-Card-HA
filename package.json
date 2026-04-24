@@ -1,0 +1,11 @@
+{
+  "name": "cyberpunk-room-card",
+  "version": "1.0.0",
+  "description": "Cyberpunk Home Assistant room dashboard card",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "devDependencies": {
+    "rollup": "^4.0.0"
+  }
+}
