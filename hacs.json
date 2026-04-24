@@ -1,5 +1,6 @@
 {
-  "name": "My Entities Card",
-  "country": "US",
-  "filename": "my-entities-card.js"
+  "name": "Cyberpunk Room Card",
+  "render_readme": true,
+  "filename": "cyberpunk-room-card.js",
+  "content_in_root": false
 }
