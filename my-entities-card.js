@@ -1,78 +1,30 @@
-class MyEntitiesCard extends HTMLElement {
-  setConfig(config) {
-    if (!config || !Array.isArray(config.entities)) {
-      throw new Error("You need to define an entities array");
-    }
-    if (config.entities.length !== 10) {
-      throw new Error("This card expects exactly 10 entities");
-    }
-    this.config = config;
-  }
-
+class CyberpunkRoomCard extends HTMLElement {
+  setConfig(config) { this.config = config; }
   set hass(hass) {
-    this._hass = hass;
-    this.render();
+    if (!this.content) {
+      this.innerHTML = `<ha-card><div id='root'></div></ha-card>`;
+      this.content = this.querySelector('#root');
+    }
+    const e = this.config.entity;
+    const state = hass.states[e] ? hass.states[e].state : 'unavailable';
+    const name = this.config.name || 'ROOM';
+    this.content.innerHTML = `
+      <style>
+        .wrap{padding:18px;border-radius:18px;background:#0c0616;color:#fff;
+        border:1px solid rgba(255,0,234,.35);box-shadow:0 0 18px rgba(255,0,234,.25)}
+        .title{color:#00f7ff;font-weight:700;font-size:20px}
+        .state{font-size:32px;color:#ff47f3;margin-top:8px}
+        button{margin-top:12px;width:100%;padding:10px;border:0;border-radius:10px;
+        background:linear-gradient(90deg,#00f7ff,#ff00ea);font-weight:700}
+      </style>
+      <div class='wrap'>
+        <div class='title'>${name}</div>
+        <div class='state'>${state}</div>
+        <button>OPEN</button>
+      </div>`;
   }
-
-  getCardSize() {
-    return 10;
-  }
-
-  render() {
-    if (!this._hass || !this.config) return;
-
-    this.innerHTML = `
-      <ha-card>
-        <div class="card-content">
-          ${this.config.title ? `<h2 class="title">${this.config.title}</h2>` : ""}
-          <style>
-            .grid {
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-              gap: 12px;
-            }
-            .item {
-              border: 1px solid var(--divider-color);
-              border-radius: 12px;
-              padding: 12px;
-              background: var(--card-background-color);
-            }
-            .name { font-weight: 600; margin-bottom: 6px; }
-            .state { font-size: 1.1rem; }
-            .entity { font-size: 0.8rem; opacity: 0.7; margin-top: 4px; }
-            .missing { opacity: 0.6; }
-            .title { margin: 0 0 12px; }
-          </style>
-          <div class="grid">
-            ${this.config.entities.map((entity) => {
-              const stateObj = this._hass.states[entity];
-              if (!stateObj) {
-                return `
-                  <div class="item missing">
-                    <div class="name">${entity}</div>
-                    <div class="state">Not found</div>
-                  </div>
-                `;
-              }
-
-              const friendly = stateObj.attributes.friendly_name || entity;
-              return `
-                <div class="item">
-                  <div class="name">${friendly}</div>
-                  <div class="state">${stateObj.state}</div>
-                  <div class="entity">${entity}</div>
-                </div>
-              `;
-            }).join("")}
-          </div>
-        </div>
-      </ha-card>
-    `;
-  }
-
-  connectedCallback() {
-    this.render();
-  }
+  getCardSize() { return 2; }
 }
-
-customElements.define("my-entities-card", MyEntitiesCard);
+customElements.define('cyberpunk-room-card', CyberpunkRoomCard);
+window.customCards = window.customCards || [];
+window.customCards.push({type:'cyberpunk-room-card',name:'Cyberpunk Room Card',description:'Neon room control card'});
